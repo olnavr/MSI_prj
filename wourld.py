@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from copy import deepcopy
 import numpy as np
+from matplotlib.lines import Line2D
+import matplotlib.animation as animation
 
 class Wourld:
     def __init__(self, r_list, rand_seed):
@@ -97,15 +99,23 @@ class Wourld:
             self.addInternalDoor(1, 0, p)
         self.addExternalDoor(0, 1)
         self.configurePlt()
-        for r in self.rooms:
-            r.addObstacle(3)
+        self.addObstacles()
 
+
+    def addObstacles(self):
+        u = []
+        for d in self.doors:
+            for c in d.cells:
+                u.append(c)
+        for r in self.rooms:
+            r.addConstObstacle(u)
+            r.addMovingObstacle(u)
 
     def addAgents(self):
         pass
 
     def update(self):
-        pass
+        self.rooms[0].update()
 
     def configurePlt(self):
         axes = self.fg.gca()
@@ -114,10 +124,11 @@ class Wourld:
         axes.set_xticks(xmajor_ticks)
         axes.set_yticks(ymajor_ticks)
         axes.grid(which='major', alpha=0.2)
-        # axes.grid(which='minor', alpha=0.1)
         axes.set_xlim([-1, self.canvas_size[0] + 1])
         axes.set_ylim([-1, self.canvas_size[1] + 1])
         axes.grid(True)
+        # ani = animation.FuncAnimation(self.fg, self.draw, None, interval=60,
+        #                               repeat=True, blit=True)
 
     def draw(self):
         axes = self.fg.gca()
@@ -129,10 +140,17 @@ class Wourld:
             axes.plot(d.x, d.y, 'y-', linewidth=4)
             axes.plot(d.x[0], d.y[0], 'y*', linewidth=4)
         for r in self.rooms:
-            for o in r.obstacles:
+            for o in r.obstacles_c:
                 axes.plot(o.cells[0]+0.5, o.cells[1]+0.5, "r*", linewidth=6)
+        for r in self.rooms:
+            for o in r.obstacles_mov:
+                axes.plot(o.cells[0]+0.5, o.cells[1]+0.5, "m*", linewidth=6)
         self.fg.show()
 
+
+    def animate(self,e):
+        self.draw()
+        self.update()
 
     def info(self):
         for r in self.rooms:
