@@ -18,8 +18,6 @@ class Wourld:
         self.doors = []
         self.agents = []
         self.addRooms(r_list)
-        self.canvas_size = [0, 0]
-        self.fg = plt.figure()
 
     def addRooms(self, r_list):
         for r in r_list:
@@ -46,8 +44,6 @@ class Wourld:
         self.canvas_size = [max(self.rooms[r2].anti_origin[0], self.rooms[r1].anti_origin[0]),
                             max(self.rooms[r2].anti_origin[1], self.rooms[r1].anti_origin[1])]
         return val
-
-
 
     def addExternalDoor(self, d, r):
         dp = []
@@ -98,9 +94,7 @@ class Wourld:
             self.rooms[1].status = '0'
             self.addInternalDoor(1, 0, p)
         self.addExternalDoor(0, 1)
-        self.configurePlt()
         self.addObstacles()
-
 
     def addObstacles(self):
         u = []
@@ -115,42 +109,8 @@ class Wourld:
         pass
 
     def update(self):
-        self.rooms[0].update()
-
-    def configurePlt(self):
-        axes = self.fg.gca()
-        xmajor_ticks = np.arange(0, self.canvas_size[0] + 1, 1)
-        ymajor_ticks = np.arange(0, self.canvas_size[1] + 1, 1)
-        axes.set_xticks(xmajor_ticks)
-        axes.set_yticks(ymajor_ticks)
-        axes.grid(which='major', alpha=0.2)
-        axes.set_xlim([-1, self.canvas_size[0] + 1])
-        axes.set_ylim([-1, self.canvas_size[1] + 1])
-        axes.grid(True)
-        # ani = animation.FuncAnimation(self.fg, self.draw, None, interval=60,
-        #                               repeat=True, blit=True)
-
-    def draw(self):
-        axes = self.fg.gca()
-        for r in self.rooms[:]:
-            l = r.anti_origin[0] - r.origin[0]
-            w = r.anti_origin[1] - r.origin[1]
-            axes.add_patch(Rectangle(r.origin, l, w, alpha=1, edgecolor='red', linewidth=2.2))
-        for d in self.doors:
-            axes.plot(d.x, d.y, 'y-', linewidth=4)
-            axes.plot(d.x[0], d.y[0], 'y*', linewidth=4)
         for r in self.rooms:
-            for o in r.obstacles_c:
-                axes.plot(o.cells[0]+0.5, o.cells[1]+0.5, "r*", linewidth=6)
-        for r in self.rooms:
-            for o in r.obstacles_mov:
-                axes.plot(o.cells[0]+0.5, o.cells[1]+0.5, "m*", linewidth=6)
-        self.fg.show()
-
-
-    def animate(self,e):
-        self.draw()
-        self.update()
+            r.update()
 
     def info(self):
         for r in self.rooms:

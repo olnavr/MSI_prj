@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from random import seed, choice, random, randint
 from door import Door
-from Obstacle import Obstacle, MovingObstacle
+from obstacle import Obstacle, MovingObstacle
 from copy import deepcopy
 
 LOOP_LIMIT = 500
@@ -33,8 +33,10 @@ class Room:
 
     def addMovingObstacle(self, non_block):
         g = deepcopy(non_block)
+        u = deepcopy(non_block)
         for oc in self.obstacles_c:
             g.append(oc.cells)
+            u.append(oc.cells)
         l = len(g)
         c = 0
         while len(g) < l + self.n_mov and c < LOOP_LIMIT:
@@ -46,11 +48,10 @@ class Room:
                 if random() > 0.5:
                     s = 'h'
                 mo = MovingObstacle(x, y, self.origin, self.anti_origin, s)
-                mo.calcLimits(g)
+                mo.calcLimits(u)
                 self.obstacles_mov.append(mo)
             c += 1
 
     def update(self):
         for ob in self.obstacles_mov:
             ob.update()
-            print(ob.cells)
