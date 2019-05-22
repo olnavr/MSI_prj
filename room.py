@@ -12,12 +12,13 @@ class Room:
         self.width = width
         self.length = length
         self.status = '1'
-        self.n_c = obs_st
-        self.obstacles_c = []
-        self.obstacles_mov = []
-        self.n_mov = obs_mov
+        self.n_c = obs_st # liczba przeszkód nieruchomych
+        self.obstacles_c = [] # lista przeszkód nieruchomych
+        self.obstacles_mov = [] # lista przeszkód ruchomych
+        self.n_mov = obs_mov # liczba przeszkód ruchomych
         self.origin = [0, 0]
         self.anti_origin = [length, width]
+        self.g = 0
 
     def addConstObstacle(self, non_block):
         g = deepcopy(non_block)

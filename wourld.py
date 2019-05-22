@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from room import Room
 from door import Door
+from agent import Agent
 from random import seed, choice, random, randint
 from operator import add, sub
 import matplotlib.pyplot as plt
@@ -14,10 +15,10 @@ import matplotlib.animation as animation
 class Wourld:
     def __init__(self, r_list, rand_seed):
         seed(rand_seed)
-        self.rooms = []
-        self.doors = []
-        self.agents = []
+        self.rooms = []  # lista pokoi
+        self.doors = []  # lista drzwi
         self.addRooms(r_list)
+        self.agent = Agent()
 
     def addRooms(self, r_list):
         for r in r_list:
@@ -76,22 +77,22 @@ class Wourld:
             r = r2
             x = [self.rooms[r1].origin[0], min(self.rooms[r1].anti_origin[0], self.rooms[r2].anti_origin[0])]
             y = [self.rooms[r1].origin[1], min(self.rooms[r1].anti_origin[1], self.rooms[r2].anti_origin[1])]
-        if s == 'v':
-            dp = [choice(x), randint(y[0],y[-1]-1)]
-        elif s == 'h':
+        if s == 'v':  # wertykalny
+            dp = [choice(x), randint(y[0], y[-1]-1)]
+        elif s == 'h':  # horyzontalny
             dp = [randint(x[0], x[-1]-1), choice(y)]
         self.doors.append(Door(*dp, *self.rooms[r].anti_origin, s))
 
     def combine2Rooms(self):
-        self.rooms[0].origin = [0,0]
-        self.rooms[1].origin = [0,0]
+        self.rooms[0].origin = [0, 0]
+        self.rooms[1].origin = [0, 0]
         if random() > 0.5:
-            p = self.calcOrigin(0, 1)
-            self.rooms[0].status = '0'
+            p = self.calcOrigin(0, 1)  # v albo h
+            self.rooms[0].status = '0'  # pokój początkowy (?)
             self.addInternalDoor(0, 1, p)
         else:
             p = self.calcOrigin(1, 0)
-            self.rooms[1].status = '0'
+            self.rooms[1].status = '0'  # pokój początkowy (?)
             self.addInternalDoor(1, 0, p)
         self.addExternalDoor(0, 1)
         self.addObstacles()

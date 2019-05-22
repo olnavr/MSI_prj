@@ -17,6 +17,9 @@ class MovingObstacle:
         self.cells = [x, y]
         self.status = status
         self.way = 1
+        self.N = 0  # liczba pól, po których chodzi przeszkoda
+        self.T = 0  # okres ruchu przeszkody
+        self.b = 0  # bias - przesunięcie (faza początkowa) okresowego ruchu przeszkody
         if self.status == 'v':
             self.limits = [r_orig[1]-1, r_anti_orig[1]]
         elif self.status == 'h':
@@ -47,7 +50,13 @@ class MovingObstacle:
             self.limits = [g[0], g[-1]]
         else:
             self.limits = [g[inx-1], g[inx+1]]
-        print(self.limits,self.status)
+        self.N = self.limits[1] - self.limits[0] - 1
+        self.T = 2*(self.N-1)
+        if self.status == 'v':
+            self.b = self.cells[1] - self.limits[0] - 1
+        elif self.status == 'h':
+            self.b = self.cells[0] - self.limits[0] - 1
+        print(self.limits, self.status)
 
     def update(self):
         if self.status == 'v':

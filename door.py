@@ -30,4 +30,4 @@ class Door:
         self.status = status
 
     def info(self):
-        print('door ',self.x, self.y, self.status)
+        print('door ', self.x, self.y, self.status)
