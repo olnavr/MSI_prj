@@ -20,6 +20,19 @@ class Room:
         self.anti_origin = [length, width]
         self.g = 0
 
+    def addAgent(self, non_block):
+        g = deepcopy(non_block)
+        l = len(g)
+        c = 0
+        while len(g) < l + 1 and c < LOOP_LIMIT:
+            x = randint(self.origin[0], self.anti_origin[0]-1)
+            y = randint(self.origin[1], self.anti_origin[1]-1)
+            if sum([e == [x, y] for e in g]) == 0:
+                g.append([x, y])
+                return [x, y]
+            c += 1
+
+
     def addConstObstacle(self, non_block):
         g = deepcopy(non_block)
         l = len(g)

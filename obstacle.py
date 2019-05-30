@@ -20,6 +20,7 @@ class MovingObstacle:
         self.N = 0  # liczba pól, po których chodzi przeszkoda
         self.T = 0  # okres ruchu przeszkody
         self.b = 0  # bias - przesunięcie (faza początkowa) okresowego ruchu przeszkody
+        self.history = []
         if self.status == 'v':
             self.limits = [r_orig[1]-1, r_anti_orig[1]]
         elif self.status == 'h':
@@ -56,7 +57,6 @@ class MovingObstacle:
             self.b = self.cells[1] - self.limits[0] - 1
         elif self.status == 'h':
             self.b = self.cells[0] - self.limits[0] - 1
-        print(self.limits, self.status)
 
     def update(self):
         if self.status == 'v':
@@ -71,4 +71,6 @@ class MovingObstacle:
             elif self.cells[0] == self.limits[1]-1:
                 self.way = -1
             self.cells[0] = self.cells[0] + self.way
+        self.history.append(deepcopy(self.cells))
+
 

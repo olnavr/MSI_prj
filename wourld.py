@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 from room import Room
 from door import Door
-from agent import Agent
 from random import seed, choice, random, randint
 from operator import add, sub
 import matplotlib.pyplot as plt
@@ -12,13 +11,19 @@ import numpy as np
 from matplotlib.lines import Line2D
 import matplotlib.animation as animation
 
+
+def manhattan_distance(x, y):
+    return sum(abs(a - b) for a, b in zip(x, y))
+
 class Wourld:
     def __init__(self, r_list, rand_seed):
         seed(rand_seed)
         self.rooms = []  # lista pokoi
         self.doors = []  # lista drzwi
         self.addRooms(r_list)
-        self.agent = Agent()
+        self.agent_sp = None
+        self.targets = []
+
 
     def addRooms(self, r_list):
         for r in r_list:
@@ -99,15 +104,35 @@ class Wourld:
 
     def addObstacles(self):
         u = []
+        fr = True
         for d in self.doors:
             for c in d.cells:
                 u.append(c)
         for r in self.rooms:
             r.addConstObstacle(u)
+            if fr:
+                self.agent_sp = r.addAgent(u)
+                fr = False
             r.addMovingObstacle(u)
+        print('agent start point', self.agent_sp)
 
-    def addAgents(self):
-        pass
+    def calcTargets(self):
+        r1 = self.rooms[0]
+        u1 = manhattan_distance(r1.origin, self.doors[0].cells[0])
+        u2 = manhattan_distance(r1.origin, self.doors[0].cells[1])
+        if u1 < u2:
+            self.targets.append(self.doors[0].cells[0])
+        else:
+            self.targets.append(self.doors[0].cells[1])
+
+        r2 = self.rooms[1]
+        u1 = manhattan_distance(r2.origin, self.doors[1].cells[0])
+        u2 = manhattan_distance(r2.origin, self.doors[1].cells[1])
+        if u1 < u2:
+            self.targets.append(self.doors[1].cells[0])
+        else:
+            self.targets.append(self.doors[1].cells[1])
+        print(self.targets)
 
     def update(self):
         for r in self.rooms:
@@ -117,3 +142,4 @@ class Wourld:
         for r in self.rooms:
             r.info()
             print("---------------")
+

@@ -14,11 +14,11 @@ def is_wall(point, w, current_room):
 
 
 class Agent:
-    def __init__(self):
-        self.search_point = [12, 28]  # punkt startowy - DO ZMIANY
+    def __init__(self, sp, targets):
+        self.search_point = sp #[12, 28]  # punkt startowy - DO ZMIANY
         # TRZEBA WPROWADZIĆ WYZNACZANIE PUNKTU STARTOWEGO (searching_point) ORAZ
         # CELÓW W POKOJU 1 I 2 (targets[0] i targets[1]) W POSTACI OGÓLNEJ
-        self.targets = [[5, 17], [6, 8]]  # cele - DO ZMIANY
+        self.targets = targets #[[5, 17], [6, 8]]  # cele - DO ZMIANY
         self.target1_reached = False
         self.track = [[], []]
         self.candidate_track = []
