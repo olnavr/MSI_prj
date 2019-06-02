@@ -142,4 +142,3 @@ class Wourld:
         for r in self.rooms:
             r.info()
             print("---------------")
-

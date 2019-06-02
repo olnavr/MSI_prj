@@ -23,7 +23,7 @@ class Agent:
         self.track = [[], []]
         self.candidate_track = []
         self.t_max = 50
-        self.t = 0
+        self.t = 1
 
     # główny algorytm rekurencyjny
     def backtracking_algorithm(self, w):
@@ -47,9 +47,9 @@ class Agent:
 
         if self.t <= self.t_max:
 
-            # sprawdzenie ruchu w lewo
+            # sprawdzenie ruchu w prawo
             if self.search_point[0] < current_target[0] and \
-                    not self.is_obstacle(w, current_room, neighbors[0]) and \
+                    not self.is_obstacle(w, current_room, neighbors[0], current_time) and \
                     not is_wall(neighbors[0], w, current_room) and \
                     not neighbors[0] in self.candidate_track:
                 if self.new_step(current_time, neighbors, 0, w, current_room):
@@ -57,7 +57,7 @@ class Agent:
 
             # sprawdzenie ruchu w górę
             if self.search_point[1] < current_target[1] and \
-                    not self.is_obstacle(w, current_room, neighbors[1]) and \
+                    not self.is_obstacle(w, current_room, neighbors[1], current_time) and \
                     not is_wall(neighbors[1], w, current_room) and \
                     not neighbors[1] in self.candidate_track:
                 if self.new_step(current_time, neighbors, 1, w, current_room):
@@ -65,7 +65,7 @@ class Agent:
 
             # sprawdzenie ruchu w lewo
             if self.search_point[0] > current_target[0] and \
-                    not self.is_obstacle(w, current_room, neighbors[2]) and \
+                    not self.is_obstacle(w, current_room, neighbors[2], current_time) and \
                     not is_wall(neighbors[2], w, current_room) and \
                     not neighbors[2] in self.candidate_track:
                 if self.new_step(current_time, neighbors, 2, w, current_room):
@@ -73,7 +73,7 @@ class Agent:
 
             # sprawdzenie ruchu w dół
             if self.search_point[1] > current_target[1] and \
-                    not self.is_obstacle(w, current_room, neighbors[3]) and \
+                    not self.is_obstacle(w, current_room, neighbors[3], current_time) and \
                     not is_wall(neighbors[3], w, current_room) and \
                     not neighbors[3] in self.candidate_track:
                 if self.new_step(current_time, neighbors, 3, w, current_room):
@@ -81,29 +81,29 @@ class Agent:
 
             # podobne sprawdzania ruchów, ale w sytuacji, gdy nie można zmierzać w kierunku celu
 
-            # sprawdzenie ruchu w lewo
-            if not self.is_obstacle(w, current_room, neighbors[0]) and \
+            # sprawdzenie ruchu w prawo
+            if not self.is_obstacle(w, current_room, neighbors[0], current_time) and \
                     not is_wall(neighbors[0], w, current_room) and \
                     not neighbors[0] in self.candidate_track:
                 if self.new_step(current_time, neighbors, 0, w, current_room):
                     return True
 
             # sprawdzenie ruchu w górę
-            if not self.is_obstacle(w, current_room, neighbors[1]) and \
+            if not self.is_obstacle(w, current_room, neighbors[1], current_time) and \
                     not is_wall(neighbors[1], w, current_room) and \
                     not neighbors[1] in self.candidate_track:
                 if self.new_step(current_time, neighbors, 1, w, current_room):
                     return True
 
             # sprawdzenie ruchu w lewo
-            if not self.is_obstacle(w, current_room, neighbors[2]) and \
+            if not self.is_obstacle(w, current_room, neighbors[2], current_time) and \
                     not is_wall(neighbors[2], w, current_room) and \
                     not neighbors[2] in self.candidate_track:
                 if self.new_step(current_time, neighbors, 2, w, current_room):
                     return True
 
             # sprawdzenie ruchu w dół
-            if not self.is_obstacle(w, current_room, neighbors[3]) and \
+            if not self.is_obstacle(w, current_room, neighbors[3], current_time) and \
                     not is_wall(neighbors[3], w, current_room) and \
                     not neighbors[3] in self.candidate_track:
                 if self.new_step(current_time, neighbors, 3, w, current_room):
@@ -142,29 +142,23 @@ class Agent:
             return False
 
     # sprawdzenie czy w punkcie nastąpi kolizja z przeszkodą
-    def is_obstacle(self, w, current_room, point):
+    def is_obstacle(self, w, current_room, point, current_time):
         for oc in w.rooms[current_room].obstacles_c:
             if point == oc.cells:
                 return True
         for om in w.rooms[current_room].obstacles_mov:
-            temp1 = self.t % om.T
-            temp2 = (self.t+1) % om.T
+            temp1 = current_time % om.T
+            temp2 = (current_time + 1) % om.T
             if om.status == 'v':
                 for n in range(0, om.N):
-                    if ((point == [om.cells[0], om.cells[1]-om.b+n]) and  # sytuacja, gdy miną się w kolejnym ruchu
-                        (((om.way == -1) and (point[1] > self.search_point[1])) or ((om.way == 1) and
-                                                                                    (point[1] < self.search_point[1])))
-                        and ((temp1 == om.T-n-om.b) or (temp1 == ((om.T+n-om.b) % om.T)))) or \
-                            ((point == [om.cells[0], om.cells[1]-om.b+n]) and ((temp2 == om.T-n-om.b) or  # sytuacja gdy w kolejnym ruchu zajmą to samo pole
-                                                                               (temp2 == ((om.T+n-om.b) % om.T)))):
+                    if (point == [om.cells[0], om.cells[1]-om.b+n]) and \
+                            (((((temp1+om.b) % om.T >= om.T/2) and (point[1] > self.search_point[1])) or (((temp1+om.b) % om.T < om.T/2) and (point[1] < self.search_point[1]))) and ((temp1 == om.T-n-om.b) or (temp1 == ((om.T+n-om.b) % om.T))) or
+                             ((temp2 == om.T-n-om.b) or (temp2 == ((om.T+n-om.b) % om.T)))):
                         return True
             elif om.status == 'h':
                 for n in range(0, om.N):
-                    if ((point == [om.cells[0]-om.b+n, om.cells[1]]) and
-                        (((om.way == -1) and (point[0] > self.search_point[0])) or ((om.way == 1) and
-                                                                                    (point[0] < self.search_point[0])))
-                        and ((temp1 == om.T-n-om.b) or (temp1 == ((om.T+n-om.b) % om.T)))) or \
-                            ((point == [om.cells[0]-om.b+n, om.cells[1]]) and ((temp2 == om.T-n-om.b) or
-                                                                               (temp2 == ((om.T+n-om.b) % om.T)))):
+                    if (point == [om.cells[0]-om.b+n, om.cells[1]]) and \
+                            (((((temp1+om.b) % om.T >= om.T/2) and (point[0] > self.search_point[0])) or (((temp1+om.b) % om.T < om.T/2) and (point[0] < self.search_point[0]))) and ((temp1 == om.T-n-om.b) or (temp1 == ((om.T+n-om.b) % om.T))) or
+                             ((temp2 == om.T-n-om.b) or (temp2 == ((om.T+n-om.b) % om.T)))):
                         return True
         return False

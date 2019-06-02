@@ -72,5 +72,3 @@ class MovingObstacle:
                 self.way = -1
             self.cells[0] = self.cells[0] + self.way
         self.history.append(deepcopy(self.cells))
-
-
