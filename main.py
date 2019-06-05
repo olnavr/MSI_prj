@@ -7,22 +7,30 @@ from anime import Anime
 from agent import Agent
 
 def main(args):
-    r_list = [[12, 11, 10, 8], [17, 7, 10, 8]]
-    w = Wourld(r_list, 6)
-    w.combine2Rooms()
-    w.calcTargets()
-    agent = Agent(w.agent_sp, w.targets)
-    if not agent.backtracking_algorithm(w):
-        print("NIE UDAŁO SIĘ ZNALEŹĆ ŚCIEŻKI")
-    else:
+    r_list = [[12, 11, 5, 3], [17, 7, 5, 3]]
+    anim = False
+    random_seed = 1
+    for i in range(50):
+        w = Wourld(r_list, random_seed)
+        w.combine2Rooms()
+        w.calcTargets()
+        agent = Agent(w.agent_sp, w.targets)
         if not agent.backtracking_algorithm(w):
             print("NIE UDAŁO SIĘ ZNALEŹĆ ŚCIEŻKI")
         else:
-            track = agent.track[0] + agent.track[1]
-            for t in track:
-                print(t)
-    anime = Anime(w, agent)
-    input()
+            if not agent.backtracking_algorithm(w):
+                print("NIE UDAŁO SIĘ ZNALEŹĆ ŚCIEŻKI")
+            else:
+                track = agent.track[0] + agent.track[1]
+                # iteration, Shortest track,robot track
+                print(i,w.shortest_route, len(track))
+                random_seed += 1
+                if anim:
+                    anime = Anime(w, agent)
+                    input()
+                # for t in track:
+                #     print(t)
+
     return 0
 
 

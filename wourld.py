@@ -22,6 +22,7 @@ class Wourld:
         self.doors = []  # lista drzwi
         self.addRooms(r_list)
         self.agent_sp = None
+        self.shortest_route = None
         self.targets = []
 
 
@@ -114,7 +115,7 @@ class Wourld:
                 self.agent_sp = r.addAgent(u)
                 fr = False
             r.addMovingObstacle(u)
-        print('agent start point', self.agent_sp)
+        # print('agent start point', self.agent_sp)
 
     def calcTargets(self):
         r1 = self.rooms[0]
@@ -132,7 +133,9 @@ class Wourld:
             self.targets.append(self.doors[1].cells[0])
         else:
             self.targets.append(self.doors[1].cells[1])
-        print(self.targets)
+        self.shortest_route = manhattan_distance(self.agent_sp, self.targets[0]) + \
+                              manhattan_distance(self.targets[1], self.targets[0])
+        # print(self.targets)
 
     def update(self):
         for r in self.rooms:
