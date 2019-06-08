@@ -134,7 +134,7 @@ class Wourld:
         else:
             self.targets.append(self.doors[1].cells[1])
         self.shortest_route = manhattan_distance(self.agent_sp, self.targets[0]) + \
-                              manhattan_distance(self.targets[1], self.targets[0])
+                              manhattan_distance(self.targets[1], self.targets[0]) + 1
         # print(self.targets)
 
     def update(self):

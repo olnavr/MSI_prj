@@ -51,6 +51,7 @@ class MovingObstacle:
             self.limits = [g[0], g[-1]]
         else:
             self.limits = [g[inx-1], g[inx+1]]
+
         self.N = self.limits[1] - self.limits[0] - 1
         self.T = 2*(self.N-1)
         if self.status == 'v':

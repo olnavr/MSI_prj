@@ -23,14 +23,11 @@ def main(args):
             else:
                 track = agent.track[0] + agent.track[1]
                 # iteration, Shortest track,robot track
-                print(i,w.shortest_route, len(track))
-                random_seed += 1
+                print(i, w.shortest_route, len(track))
                 if anim:
                     anime = Anime(w, agent)
                     input()
-                # for t in track:
-                #     print(t)
-
+        random_seed = random_seed + 1
     return 0
 
 
