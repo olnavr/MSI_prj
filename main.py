@@ -7,29 +7,42 @@ from anime import Anime
 from agent import Agent
 
 def main(args):
-    # r_list = [[12, 11, 5, 3], [17, 7, 5, 3]]
-    r_list = [[12, 11, 7, 5], [17, 7, 7, 5]]
+    r_list = [[12, 11, 5, 3], [17, 7, 5, 3]]
     anim = False
+    n_tests = 50  # liczba testów
+    opt_cnt = 0  # licznik światów, w których została znaleziona trasa najbardziej optymalna
+    fail_cnt = 0  # licznik światów, w których nie udało się znaleźć trasy
+    mean_exc = 0  # średnia bezwzględna nadmiarowość trasy
     random_seed = 1
-    for i in range(50):
+    for i in range(n_tests):
         w = Wourld(r_list, random_seed)
         w.combine2Rooms()
         w.calcTargets()
-        print(w.agent_sp, w.targets)
-        agent = Agent(w.agent_sp, w.targets)
+        agent = Agent(w.agent_start_point, w.targets)
         if not agent.backtracking_algorithm(w):
-            print("NIE UDAŁO SIĘ ZNALEŹĆ ŚCIEŻKI")
+            print(i, w.shortest_route, "NIE UDAŁO SIĘ ZNALEŹĆ ŚCIEŻKI")
+            fail_cnt = fail_cnt + 1
         else:
             if not agent.backtracking_algorithm(w):
-                print("NIE UDAŁO SIĘ ZNALEŹĆ ŚCIEŻKI")
+                print(i, w.shortest_route, "NIE UDAŁO SIĘ ZNALEŹĆ ŚCIEŻKI")
+                fail_cnt = fail_cnt + 1
             else:
                 track = agent.track[0] + agent.track[1]
+                len_track = len(track)
                 # iteration, Shortest track,robot track
-                print(random_seed, w.shortest_route-1, len(track)-1)
+                if len_track == w.shortest_route:
+                    opt_cnt = opt_cnt + 1
+                print(i, w.shortest_route, len(track))
+                mean_exc = mean_exc + len_track - w.shortest_route
                 if anim:
-                    anime = Anime(w, agent, 'm')
+                    anime = Anime(w, agent)
                     input()
         random_seed = random_seed + 1
+    mean_exc = mean_exc/n_tests
+    print("- liczba testów: ", n_tests)
+    print("- liczba tras najbardziej optymalnych: ", opt_cnt)
+    print("- liczba tras nieznalezionych: ", fail_cnt)
+    print("- średni współczynnik bezwzględnej nadmiarowości tras: ", mean_exc)
     return 0
 
 

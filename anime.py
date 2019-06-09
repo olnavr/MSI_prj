@@ -3,11 +3,10 @@ import matplotlib.patches as patches
 from matplotlib.patches import Rectangle
 import numpy as np
 import matplotlib.animation as animation
-from matplotlib.animation import FFMpegWriter
 from wourld import Wourld
 
 class Anime:
-    def __init__(self, wourld, agent, type):
+    def __init__(self, wourld, agent):
         self.canvas_size = wourld.canvas_size
         self.agent = agent
         self.htime = 0
@@ -17,17 +16,10 @@ class Anime:
         self.doors = wourld.doors
         self.update = wourld.update
         self.fg = plt.figure()
-
+        self.ani = animation.FuncAnimation(self.fg, self.animate_from_history, 360)
+        self.fg.show()
         for i in range(self.hlen):
             self.update()
-        if type == 'c':
-            self.ani = animation.FuncAnimation(self.fg, self.animate_from_history, 360)
-            self.fg.show()
-        elif type == 'm':
-            self.ani = animation.FuncAnimation(self.fg, self.animate_from_history, 360, save_count=self.hlen)
-            self.animate_movie(1)
-
-
 
     def configurePlt(self):
         axes = self.fg.gca()
@@ -59,14 +51,3 @@ class Anime:
                 axes.plot(o.history[self.htime][0] + 0.5, o.history[self.htime][1] + 0.5, "m*", linewidth=6)
         axes.plot(self.agent_track[self.htime][0] + 0.5, self.agent_track[self.htime][1] + 0.5, marker="D", color="g", linewidth=6)
         self.htime = (self.htime + 1) % self.hlen
-        return axes
-
-
-    def animate_movie(self, e):
-        print('probe1')
-        ffwriter = animation.FFMpegWriter(fps=30, extra_args=['-vcodec', 'libx264'])
-        self.ani.save('basic_animation.mp4', writer=ffwriter)
-        print('probe2')
-
-
-

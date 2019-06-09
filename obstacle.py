@@ -53,11 +53,18 @@ class MovingObstacle:
             self.limits = [g[inx-1], g[inx+1]]
 
         self.N = self.limits[1] - self.limits[0] - 1
-        self.T = 2*(self.N-1)
+        self.T = 2*(self.N - 1)
         if self.status == 'v':
             self.b = self.cells[1] - self.limits[0] - 1
         elif self.status == 'h':
             self.b = self.cells[0] - self.limits[0] - 1
+
+    # sprawdzenie czy w momencie t przeszkoda porusza się w prawo (status=h) lub w górę (status=v)
+    def move_right_up(self, t):
+        return
+
+    def is_in(self, i, t):
+        return (t == self.T - i - self.b) or (self == ((self.T + i - self.b) % self.T))
 
     def update(self):
         if self.status == 'v':
