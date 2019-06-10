@@ -19,7 +19,8 @@ class Room:
         self.origin = [0, 0]
         self.anti_origin = [length, width]
         self.g = 0
-
+	
+	# obliczanie punkru startowego robota
     def addAgent(self, non_block):
         g = deepcopy(non_block)
         l = len(g)
@@ -32,7 +33,7 @@ class Room:
                 return [x, y]
             c += 1
 
-
+	# obliczanie punktów startowych przeskód nieruchomych
     def addConstObstacle(self, non_block):
         g = deepcopy(non_block)
         l = len(g)
@@ -44,7 +45,8 @@ class Room:
                 g.append([x, y])
                 self.obstacles_c.append(Obstacle(x, y, 'n'))
             c += 1
-
+	
+	# obliczanie punktów startowych przeskód ruchomych
     def addMovingObstacle(self, non_block):
         g = deepcopy(non_block)
         u = deepcopy(non_block)

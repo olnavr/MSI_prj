@@ -17,19 +17,20 @@ def manhattan_distance(x, y):
 
 class Wourld:
     def __init__(self, r_list, rand_seed):
-        seed(rand_seed)
+        seed(rand_seed)# ziarno generatora liczb pseudolosowych
         self.rooms = []  # lista pokoi
         self.doors = []  # lista drzwi
         self.addRooms(r_list)
-        self.agent_start_point = None
-        self.shortest_route = None
-        self.targets = []
+        self.agent_start_point = None # punkt startowy robota
+        self.shortest_route = None # dlugość najkrótszej ścieżki
+        self.targets = [] # cele
 
-
+	# dodanie pokojów
     def addRooms(self, r_list):
         for r in r_list:
             self.rooms.append(Room(*r))
-
+	
+	#obliczanie pozycji pokojów
     def calcOrigin(self, r1, r2):
         val = -1
         if random() > 0.5:
@@ -51,7 +52,7 @@ class Wourld:
         self.canvas_size = [max(self.rooms[r2].anti_origin[0], self.rooms[r1].anti_origin[0]),
                             max(self.rooms[r2].anti_origin[1], self.rooms[r1].anti_origin[1])]
         return val
-
+	# obliczanie pozycji dżwi docelowych
     def addExternalDoor(self, d, r):
         dp = []
         s = ''
@@ -70,7 +71,7 @@ class Wourld:
             s = 'h'
             dp = [randint(*x1), choice(y)]
         self.doors.append(Door(*dp, *self.rooms[r].anti_origin, s))
-
+	# obliczanie pozycji dzwi pomiędzy pokojem a korzytażem
     def addInternalDoor(self, r1, r2, s):
         x, y = [0], [0]
         r = 0
@@ -88,7 +89,7 @@ class Wourld:
         elif s == 'h':  # horyzontalny
             dp = [randint(x[0], x[-1]-1), choice(y)]
         self.doors.append(Door(*dp, *self.rooms[r].anti_origin, s))
-
+	# rozmieszczenie pokojów wzajemnie siebie w przestrzeni
     def combine2Rooms(self):
         self.rooms[0].origin = [0, 0]
         self.rooms[1].origin = [0, 0]
@@ -102,7 +103,7 @@ class Wourld:
             self.addInternalDoor(1, 0, p)
         self.addExternalDoor(0, 1)
         self.addObstacles()
-
+	# dodanie przeszkód, oblicznie pozycji startowych robota i przeszkód
     def addObstacles(self):
         u = []
         fr = True
@@ -116,7 +117,7 @@ class Wourld:
                 fr = False
             r.addMovingObstacle(u)
         # print('agent start point', self.agent_sp)
-
+	# obliczenie celów
     def calcTargets(self):
         r1 = self.rooms[0]
         u1 = manhattan_distance(r1.origin, self.doors[0].cells[0])
@@ -136,11 +137,11 @@ class Wourld:
         self.shortest_route = manhattan_distance(self.agent_start_point, self.targets[0]) + \
                               manhattan_distance(self.targets[1], self.targets[0]) + 1
         # print(self.targets)
-
+	# zmana stanu obiektów pokoi
     def update(self):
         for r in self.rooms:
             r.update()
-
+	#informacje
     def info(self):
         for r in self.rooms:
             r.info()

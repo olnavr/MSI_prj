@@ -4,6 +4,7 @@ from random import seed, choice, random, randint
 from copy import deepcopy
 import matplotlib; matplotlib.use("TkAgg")
 
+#pszeszkoda nieruchoma
 class Obstacle:
     def __init__(self, x, y, status):
         self.cells = [x, y]
@@ -12,10 +13,11 @@ class Obstacle:
     def update(self, status):
         self.status = status
 
+		#pszeszkoda ruchoma
 class MovingObstacle:
     def __init__(self, x, y, r_orig, r_anti_orig, status):
-        self.cells = [x, y]
-        self.status = status
+        self.cells = [x, y]# pozycja przesz.
+        self.status = status # ruch poziomy czy pionowy
         self.way = 1
         self.N = 0  # liczba pól, po których chodzi przeszkoda
         self.T = 0  # okres ruchu przeszkody
@@ -26,7 +28,7 @@ class MovingObstacle:
         elif self.status == 'h':
             self.limits = [r_orig[0]-1, r_anti_orig[0]]
 
-    def calcLimits(self, obs):
+    def calcLimits(self, obs):#obliczenie ograniczeń ruchu
         g = [self.limits[0]]
         inx = 0
         if self.status == 'v':
@@ -66,7 +68,7 @@ class MovingObstacle:
     def is_in(self, i, t):
         return (t == self.T - i - self.b) or (self == ((self.T + i - self.b) % self.T))
 
-    def update(self):
+    def update(self): # obliczanie następnego kroku
         if self.status == 'v':
             if self.cells[1] == self.limits[0]+1:
                 self.way = 1
