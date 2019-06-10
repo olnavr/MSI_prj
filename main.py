@@ -8,7 +8,7 @@ from agent import Agent
 
 def main(args):
     r_list = [[12, 11, 5, 3], [17, 7, 5, 3]]
-    anim = True
+    anim = False
     n_tests = 50  # liczba testów
     opt_cnt = 0  # licznik światów, w których została znaleziona trasa najbardziej optymalna
     fail_cnt = 0  # licznik światów, w których nie udało się znaleźć trasy
